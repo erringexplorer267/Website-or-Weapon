@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Website Detection System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: linear-gradient(135deg, #0a0f1e 0%, #1a1f3a 50%, #0f1729 100%);
+            background-attachment: fixed;
+        }
+        
+        :root {
+            --neon-cyan: #00f5ff;
+            --neon-purple: #b800ff;
+            --neon-pink: #ff00ff;
+            --neon-red: #ff3131;
+            --neon-green: #00ff88;
+        }
+
+        /* Animated gradient background */
+        .gradient-bg {
+            background: linear-gradient(135deg, rgba(0, 245, 255, 0.05) 0%, rgba(184, 0, 255, 0.05) 100%);
+        }
+
+        /* Glass morphism effect */
+        .glass {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Enhanced neon glow */
+        .neon-box {
+            box-shadow: 
+                0 0 20px rgba(0, 245, 255, 0.3),
+                0 0 40px rgba(184, 0, 255, 0.2),
+                inset 0 0 60px rgba(0, 245, 255, 0.05);
+        }
+
+        .neon-text-cyan {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 20px rgba(0, 245, 255, 0.5);
+        }
+
+        /* Animated pulsing effect */
+        @keyframes pulse-glow {
+            0%, 100% { 
+                box-shadow: 0 0 20px rgba(0, 245, 255, 0.4),
+                           0 0 40px rgba(184, 0, 255, 0.2);
+            }
+            50% { 
+                box-shadow: 0 0 30px rgba(0, 245, 255, 0.6),
+                           0 0 60px rgba(184, 0, 255, 0.4);
+            }
+        }
+
+        .pulse-glow {
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+
+        /* Floating particles background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--neon-cyan);
+            border-radius: 50%;
+            animation: float 20s infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-100px) translateX(50px); }
+            50% { transform: translateY(-200px) translateX(-50px); }
+            75% { transform: translateY(-100px) translateX(100px); }
+        }
+
+        /* Result boxes with enhanced effects */
+        .result-good {
+            border-color: var(--neon-green);
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 255, 136, 0.05) 100%);
+            color: var(--neon-green);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.4), inset 0 0 30px rgba(0, 255, 136, 0.1);
+        }
+
+        .result-bad {
+            border-color: var(--neon-red);
+            background: linear-gradient(135deg, rgba(255, 49, 49, 0.1) 0%, rgba(255, 49, 49, 0.05) 100%);
+            color: var(--neon-red);
+            box-shadow: 0 0 30px rgba(255, 49, 49, 0.4), inset 0 0 30px rgba(255, 49, 49, 0.1);
+        }
+
+        .result-error {
+            border-color: var(--neon-pink);
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.1) 0%, rgba(255, 0, 255, 0.05) 100%);
+            color: var(--neon-pink);
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.4), inset 0 0 30px rgba(255, 0, 255, 0.1);
+        }
+
+        .analysis-item {
+            background: linear-gradient(90deg, rgba(184, 0, 255, 0.1) 0%, transparent 100%);
+            border-left: 3px solid var(--neon-purple);
+            transition: all 0.3s ease;
+        }
+
+        .analysis-item:hover {
+            background: linear-gradient(90deg, rgba(184, 0, 255, 0.2) 0%, rgba(184, 0, 255, 0.05) 100%);
+            transform: translateX(5px);
+        }
+
+        /* Input field enhancements */
+        .cyber-input {
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid rgba(0, 245, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .cyber-input:focus {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+            background: rgba(15, 23, 42, 0.95);
+        }
+
+        /* Button hover effects */
+        .btn-scan {
+            background: linear-gradient(135deg, var(--neon-purple) 0%, var(--neon-pink) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-scan::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-scan:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* Scan animation */
+        @keyframes scan-line {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        .scanning::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+            animation: scan-line 2s ease-in-out infinite;
+        }
+
+        /* History item hover */
+        .history-item {
+            transition: all 0.3s ease;
+        }
+
+        .history-item:hover {
+            transform: translateX(10px);
+        }
+    </style>
+</head>
+<body class="text-gray-100 relative">
+    <!-- Floating particles background -->
+    <div class="particles">
+        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
+        <div class="particle" style="left: 40%; animation-delay: 1s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 3s;"></div>
+        <div class="particle" style="left: 60%; animation-delay: 5s;"></div>
+        <div class="particle" style="left: 70%; animation-delay: 2.5s;"></div>
+        <div class="particle" style="left: 80%; animation-delay: 4.5s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 1.5s;"></div>
+    </div>
+
+    <div class="min-h-screen flex flex-col items-center justify-center p-4 relative z-10">
+        
+        <!-- Main Card -->
+        <div class="w-full max-w-2xl glass neon-box p-10 rounded-3xl shadow-2xl transition duration-300 pulse-glow">
+            <!-- Header with icon -->
+            <div class="text-center mb-8">
+                <div class="inline-block p-4 rounded-full mb-4" style="background: linear-gradient(135deg, rgba(0, 245, 255, 0.2) 0%, rgba(184, 0, 255, 0.2) 100%);">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 neon-text-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                </div>
+                <h1 class="text-5xl font-bold mb-3 neon-text-cyan tracking-tight">
+                    Website or Weapon?
+                </h1>
+                <p class="text-gray-400 text-lg">
+                    Advanced URL Security Analysis System
+                </p>
+            </div>
+
+            <!-- URL Input Form -->
+            <form method="POST" action="/" class="flex flex-col gap-6" onsubmit="return validateInput(event)">
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                        </svg>
+                    </div>
+                    <input 
+                        type="text" 
+                        name="url" 
+                        id="url_input"
+                        placeholder="Enter URL (e.g., https://example.com)"
+                        class="cyber-input w-full pl-14 pr-5 py-5 rounded-2xl text-white text-lg focus:outline-none"
+                        required
+                    >
+                </div>
+                
+                <div id="validation-message" class="text-sm text-red-400 hidden px-2">
+                    ⚠ Input does not look like a domain or URL. Please enter a proper address.
+                </div>
+                
+                <!-- Buttons -->
+                <div class="flex gap-4">
+                    <button 
+                        type="button" 
+                        onclick="clearInputAndResult()"
+                        class="w-1/3 glass text-gray-300 font-semibold py-4 rounded-xl hover:bg-slate-700/50 transition duration-300 shadow-lg border border-gray-600"
+                    >
+                        RESET
+                    </button>
+                    <button 
+                        type="submit" 
+                        class="btn-scan w-2/3 font-bold py-4 rounded-xl transition duration-300 uppercase tracking-wider text-white shadow-2xl relative z-10"
+                    >
+                        ⚡ INITIATE SCAN
+                    </button>
+                </div>
+            </form>
+
+            <!-- Result Display -->
+            {% if predict_message %}
+            <div id="result-box" 
+                 class="mt-8 p-6 border-2 rounded-2xl font-bold text-xl text-center transition duration-300 relative overflow-hidden {{ 'result-' + predict_class if predict_class else 'result-error' }}"
+            >
+                {{ predict_message | safe }}
+                {% if url_checked %}
+                <p class="text-xs mt-4 opacity-70 font-normal">Scanned URL: <span class="truncate block font-mono text-sm mt-1">{{ url_checked }}</span></p>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Analysis Report -->
+            {% if analysis_results %}
+            <div class="mt-8 glass p-6 rounded-2xl shadow-inner border border-purple-500/30">
+                <h3 class="text-2xl font-bold text-white mb-6 flex items-center border-b border-purple-500/30 pb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span class="text-purple-300">SECURITY REPORT</span>
+                </h3>
+                <ul class="space-y-4">
+                    {% for item in analysis_results %}
+                    <li class="analysis-item p-4 rounded-lg text-sm text-gray-300">
+                        {{ item | safe }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+        </div> <!-- End Main Card -->
+
+        <!-- History Log -->
+        {% if session.history %}
+        <div class="w-full max-w-2xl mt-8 glass p-8 rounded-3xl shadow-2xl border border-cyan-500/20">
+            <h2 class="text-2xl font-bold neon-text-cyan mb-6 border-b border-cyan-500/30 pb-4 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                SCAN HISTORY
+            </h2>
+            <ul class="space-y-3">
+                {% for item in session.history %}
+                <li class="history-item p-4 rounded-xl flex items-center justify-between transition duration-300 border-l-4
+                            {% if item.result == 'good' %} border-green-500 bg-green-900/10 hover:bg-green-900/20
+                            {% elif item.result == 'bad' %} border-red-500 bg-red-900/10 hover:bg-red-900/20
+                            {% else %} border-pink-500 bg-pink-900/10 hover:bg-pink-900/20 {% endif %}">
+                    <span class="truncate font-medium text-sm w-3/4 
+                                 {% if item.result == 'good' %} text-green-300
+                                 {% elif item.result == 'bad' %} text-red-300
+                                 {% else %} text-pink-300 {% endif %}">
+                        {{ item.url }}
+                    </span>
+                    <span class="font-bold text-right text-xs uppercase px-3 py-2 rounded-full 
+                                 {% if item.result == 'good' %} bg-green-600/80 text-white 
+                                 {% elif item.result == 'bad' %} bg-red-600/80 text-white 
+                                 {% else %} bg-pink-600/80 text-white {% endif %}">
+                        {{ item.result }}
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function validateInput(event) {
+            const inputField = document.getElementById('url_input');
+            const messageBox = document.getElementById('validation-message');
+            let url = inputField.value.trim();
+
+            if (!url) { 
+                messageBox.textContent = "⚠ Please enter a URL.";
+                messageBox.classList.remove('hidden');
+                event.preventDefault(); 
+                return false;
+            }
+
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                if (url.includes('.')) {
+                    url = 'https://' + url;
+                    inputField.value = url;
+                } else {
+                    messageBox.textContent = "⚠ Input does not look like a domain or URL. Please enter a proper address.";
+                    messageBox.classList.remove('hidden');
+                    event.preventDefault(); 
+                    return false;
+                }
+            }
+            
+            messageBox.classList.add('hidden');
+            return true; 
+        }
+
+        function clearInputAndResult() {
+            document.getElementById('url_input').value = '';
+            
+            const resultBox = document.getElementById('result-box');
+            if (resultBox) {
+                resultBox.remove(); 
+            }
+            
+            const analysisBox = document.querySelector('.mt-8.glass.p-6');
+            if (analysisBox) {
+                analysisBox.remove();
+            }
+
+            document.getElementById('validation-message').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

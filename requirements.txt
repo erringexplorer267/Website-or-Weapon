@@ -1,0 +1,4 @@
+flask
+gunicorn # Used by Vercel to serve the Python app
+scikit-learn # Required for loading .pkl files
+requests # Required for downloading model files
