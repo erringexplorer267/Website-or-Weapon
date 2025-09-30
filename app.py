@@ -10,8 +10,8 @@ app.config['SECRET_KEY'] = 'a_very_secret_and_complex_key_for_flask_session_secu
 
 # --- Model URLs (REPLACE THESE WITH YOUR PUBLIC GITHUB RELEASE URLs) ---
 # Use the direct raw download URL from your GitHub Release or other storage.
-PHISHING_MODEL_URL = "https://github.com/erringexplorer267/Phishing-Website-Detection-System/releases/download/v1.0.0/phishing.pkl"
-VECTORIZER_URL = "https://github.com/erringexplorer267/Phishing-Website-Detection-System/releases/download/v1.0.0/vectorizer.pkl"
+PHISHING_MODEL_URL = "https://github.com/erringexplorer267/Website-or-Weapon/releases/download/v1.0.0/phishing.pkl"
+VECTORIZER_URL = "https://github.com/erringexplorer267/Website-or-Weapon/releases/download/v1.0.0/vectorizer.pkl"
 # -----------------------------------------------------------------------
 
 vector = None
